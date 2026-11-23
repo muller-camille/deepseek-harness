@@ -28,6 +28,10 @@ npx @deepseek-ai/dsh web
 
 该命令默认会在 `http://127.0.0.1:3080` 启动 Web UI，本机启动时还会用默认浏览器打开页面。通过 SSH 启动时只打印宿主机 URL，因为本地转发地址由 SSH 客户端或编辑器持有。传入 `--no-open` 可仅运行服务器而不打开浏览器。详见 [Web UI 指南](docs/user/guide/index.zh.md)。
 
+### 运行便携式 Linux 发行版
+
+在 glibc 2.28 或更新版本的 x86_64 Linux 主机上（包括 Red Hat Enterprise Linux 8.10），便携式发行版归档无需 Node.js 或任何系统软件包即可运行。解压后通过其中的启动器运行 `dsh web`；参见[运行便携式 Linux 发行版](docs/user/guide/portable-linux.zh.md)。
+
 <a id="run-from-source"></a>
 
 ### 从源码运行

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DeepSeek Harness browser bridge</title>
+  <style>
+    :root {
+      --bg: #ffffff; --fg: #1b2230; --muted: #5b6577; --line: #d3d8e1; --accent: #0f766e; --danger: #b42318; --field: #f6f7f9;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 14px; line-height: 1.5;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #151a22; --fg: #e5e9f0; --muted: #9aa4b5; --line: #364153; --accent: #3ec9b6; --danger: #f97066; --field: #1f2733; color-scheme: dark; }
+    }
+    body { background: var(--bg); color: var(--fg); margin: 0; min-width: 340px; }
+    main { max-width: 560px; margin: 0 auto; padding: 16px; display: grid; gap: 20px; }
+    h1 { font-size: 16px; margin: 0; }
+    h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 8px; font-weight: 600; }
+    p { margin: 0; color: var(--muted); }
+    form { display: flex; gap: 8px; }
+    input[type=text] { flex: 1; min-width: 0; padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--field); color: var(--fg); font: inherit; }
+    button { padding: 7px 12px; border: 1px solid var(--accent); border-radius: 6px; background: var(--accent); color: var(--bg); font: inherit; cursor: pointer; }
+    button.quiet { background: none; color: var(--danger); border-color: transparent; padding: 2px 6px; }
+    button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    ul { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; }
+    li { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 6px 9px; border: 1px solid var(--line); border-radius: 6px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; overflow-wrap: anywhere; }
+    .status { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; }
+    .status strong { font-weight: 600; }
+    .error { color: var(--danger); min-height: 1.5em; }
+    label.switch { display: flex; align-items: center; gap: 6px; color: var(--fg); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>DeepSeek Harness browser bridge</h1>
+
+    <div class="status">
+      <span id="status">Checking connection…</span>
+      <label class="switch"><input type="checkbox" id="paused"> Pause agent</label>
+    </div>
+
+    <section>
+      <h2>DeepSeek Harness server</h2>
+      <p>The Web UI address you open in this browser. The extension connects through that tab while it is open.</p>
+      <form id="server-form">
+        <input type="text" id="server-input" placeholder="https://10.0.0.5:3080" autocomplete="off" aria-label="Server address">
+        <button type="submit">Add</button>
+      </form>
+      <ul id="servers"></ul>
+    </section>
+
+    <section>
+      <h2>Allowed sites</h2>
+      <p>The agent can open and read only these sites, with your signed-in sessions. A site name also allows its subdomains when written as *.example.com.</p>
+      <form id="site-form">
+        <input type="text" id="site-input" placeholder="example.com or *.example.com" autocomplete="off" aria-label="Site to allow">
+        <button type="submit">Allow</button>
+      </form>
+      <ul id="sites"></ul>
+    </section>
+
+    <p class="error" id="error" role="alert"></p>
+    <p>The agent works in a tab group named "DSH agent". Close that tab or pause the agent to stop it.</p>
+  </main>
+  <script type="module" src="options.js"></script>
+</body>
+</html>

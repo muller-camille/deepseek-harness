@@ -508,6 +508,29 @@ export type Config = LocalConfig
 ```
 <!-- END GENERATED config-catalog:@deepseek-ai/dsh-bash-sandbox -->
 
+<!-- BEGIN GENERATED config-catalog:@deepseek-ai/dsh-browser-use-extension-bridge -->
+<a id="deepseek-aidsh-browser-use-extension-bridge"></a>
+
+## `@deepseek-ai/dsh-browser-use-extension-bridge`
+
+- `inject`: `browserUse` · `tools` · `systemPrompt` · `webServer`
+- `source`: [`packages/experimental/browser-use-extension-bridge/src/index.ts:31`](../packages/experimental/browser-use-extension-bridge/src/index.ts)
+
+```ts config-catalog
+/** Time and size limits for browser commands. */
+export interface Config {
+  /** Budget for one browser command, including page loads and `wait_for`. */
+  commandTimeoutMs?: number
+  /** Cap on the Markdown that one `browser_read` returns. */
+  maxContentChars?: number
+  /** Cap on the sanitized HTML the extension sends for one read. */
+  maxHtmlChars?: number
+  /** Interval between WebSocket pings to each relay. */
+  heartbeatIntervalMs?: number
+}
+```
+<!-- END GENERATED config-catalog:@deepseek-ai/dsh-browser-use-extension-bridge -->
+
 <!-- BEGIN GENERATED config-catalog:@deepseek-ai/dsh-cli-account -->
 <a id="deepseek-aidsh-cli-account"></a>
 

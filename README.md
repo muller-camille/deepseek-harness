@@ -26,6 +26,10 @@ npx @deepseek-ai/dsh web
 
 The command starts the Web UI at `http://127.0.0.1:3080` by default and opens it in the default browser for a local launch. An SSH launch only prints the host URL because the SSH client or editor owns the local forwarded address. Pass `--no-open` to run the server without opening a browser. See [Web UI guide](docs/user/guide/index.md).
 
+### Run the portable Linux release
+
+On x86_64 Linux hosts with glibc 2.28 or newer, including Red Hat Enterprise Linux 8.10, the portable release archive runs without Node.js or any system package. Extract it, then start `dsh web` through its launcher; see [Run the portable Linux release](docs/user/guide/portable-linux.md).
+
 ### Run from source
 
 To run from a repository checkout:

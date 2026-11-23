@@ -4,7 +4,7 @@ import { dirname, join } from 'node:path'
 import { create as createTar } from 'tar'
 import { expect, it, onTestFinished } from 'vitest'
 import { artifactManifestSchema, fileDigest, payloadFiles, SSH_HELPER_TARGETS, verifyPayload } from './artifact.ts'
-import { macosDeploymentVersions } from './native.ts'
+import { linuxSymbolVersionViolations, macosDeploymentVersions } from './native.ts'
 import { extractHelper } from '../verify-ssh-helper-artifact.ts'
 import { prepareSshRelease } from './release.ts'
 
@@ -80,6 +80,21 @@ it('reads minimum macOS versions without accepting a linked library version as t
   expect(macosDeploymentVersions('Load command 0\ncmd LC_VERSION_MIN_MACOSX\nversion 11.0\nLoad command 1\ncmd LC_LOAD_DYLIB\ncurrent version 1311.100.3\nLoad command 2\ncmd LC_BUILD_VERSION\nminos 14.0\nsdk 15.1\n'))
     .toEqual(['11.0', '14.0'])
   expect(macosDeploymentVersions('Load command 0\ncmd LC_LOAD_DYLIB\ncurrent version 14.0\n')).toEqual([])
+})
+
+it('rejects required Linux symbol versions above the manylinux_2_28 baseline and ignores defined versions', () => {
+  const needs = (...names: string[]) => [
+    "Version symbols section '.gnu.version' contains 4 entries:",
+    '  000:   0 (*local*)       2 (GLIBC_2.34)',
+    "Version needs section '.gnu.version_r' contains 2 entries:",
+    ' Addr: 0x0000000000000000  Offset: 0x000528  Link: 4 (libc.so.6)',
+    ...names.map((name, index) => `  0x00${index}0:   Name: ${name}  Flags: none  Version: ${index + 2}`),
+    "Version definition section '.gnu.version_d' contains 1 entry:",
+    '  0x0000: Rev: 1  Flags: BASE  Index: 1  Cnt: 1  Name: GLIBCXX_3.4.32',
+  ].join('\n')
+  expect(linuxSymbolVersionViolations(needs('GLIBC_2.28', 'GLIBCXX_3.4.25', 'CXXABI_1.3.11', 'GCC_7.0.0', 'GLIBC_PRIVATE'))).toEqual([])
+  expect(linuxSymbolVersionViolations(needs('GLIBC_2.29', 'GLIBCXX_3.4.26', 'CXXABI_1.3.12', 'GCC_7.1', 'GLIBC_2.2.5')))
+    .toEqual(['GLIBC_2.29', 'GLIBCXX_3.4.26', 'CXXABI_1.3.12', 'GCC_7.1'])
 })
 
 it('publishes only a complete clean-source matrix with native and no-Node evidence', async () => {

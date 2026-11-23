@@ -1,0 +1,150 @@
+name: Release (portable Linux)
+
+# Builds the portable Linux archive described in docs/user/guide/portable-linux.md, smoke-tests it on
+# RHEL 8.10 (UBI 8) without Node.js, and attaches it to a GitHub release. Pushing the
+# portable-linux-v<version> tag publishes; a manual dispatch validates any ref and publishes only from
+# that tag.
+on:
+  push:
+    tags: ['portable-linux-v*']
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish the verified archive to a GitHub release. Must run from the matching portable-linux-v<version> tag.
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: portable-linux-release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  DSH_TELEMETRY_DISABLED: '1'
+
+jobs:
+  build:
+    name: linux-x64
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Resolve version and validate the publication tag
+        id: version
+        env:
+          PUBLISH: ${{ github.event_name == 'push' || inputs.publish }}
+        run: |
+          set -euo pipefail
+          version="$(jq -r .version package.json)"
+          if [ "$PUBLISH" = true ] && { [ "$GITHUB_REF_TYPE" != tag ] || [ "$GITHUB_REF_NAME" != "portable-linux-v$version" ]; }; then
+            echo "::error::Publication requires the portable-linux-v$version tag, got $GITHUB_REF_TYPE $GITHUB_REF_NAME."
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - uses: pnpm/action-setup@v5.0.0
+        with:
+          dest: ${{ runner.temp }}/setup-pnpm-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '^24.22.3'
+          cache: pnpm
+
+      - uses: actions/cache@v6.1.0
+        with:
+          path: ~/.pkg-cache
+          key: pkg-fetch-node24-linux-x64-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            pkg-fetch-node24-linux-x64-
+
+      - name: Install (immutable)
+        # node-gyp fetches Node headers from nodejs.org during install, which stalls intermittently.
+        run: |
+          for attempt in 1 2 3; do
+            if pnpm install --frozen-lockfile; then exit 0; fi
+            [ "$attempt" -lt 3 ] && sleep 10
+          done
+          exit 1
+
+      - name: Build the single-file executable
+        env:
+          DSH_BUILD_CLIENT_PROFILE: official
+        run: pnpm exec tsx scripts/build-exe-for-python-sdk.ts --targets=node24-linux-x64
+
+      - name: Build static bubblewrap
+        run: scripts/portable-linux-release/build-bubblewrap.sh dist-portable/bubblewrap
+
+      - name: Package the portable archive
+        run: >-
+          pnpm exec tsx scripts/build-portable-linux-release.ts
+          --target=node24-linux-x64 --bubblewrap=dist-portable/bubblewrap
+
+      - name: Allow unprivileged user namespaces for the sandbox smoke
+        run: |
+          if sysctl kernel.apparmor_restrict_unprivileged_userns >/dev/null 2>&1; then
+            sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
+
+      - name: Smoke-test on RHEL 8.10
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: pnpm exec tsx scripts/smoke-portable-linux-release.ts --archive="dist-portable/dsh-$VERSION-linux-x64.tar.gz"
+
+      - uses: actions/upload-artifact@v7.0.1
+        with:
+          name: dsh-${{ steps.version.outputs.version }}-linux-x64
+          path: |
+            dist-portable/dsh-${{ steps.version.outputs.version }}-linux-x64.tar.gz
+            dist-portable/dsh-${{ steps.version.outputs.version }}-linux-x64.tar.gz.sha256
+          if-no-files-found: error
+          compression-level: 0
+
+  publish:
+    if: github.event_name == 'push' || inputs.publish
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8.0.1
+        with:
+          name: dsh-${{ needs.build.outputs.version }}-linux-x64
+          path: dist-portable
+
+      - name: Attach the verified archive to the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          VERSION: ${{ needs.build.outputs.version }}
+        run: |
+          set -euo pipefail
+          if ! gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            flags=(--verify-tag --title "DeepSeek Harness $VERSION for Linux x64 (portable)")
+            case "$VERSION" in *-*) flags+=(--prerelease) ;; esac
+            cat > notes.md <<EOF
+          Portable DeepSeek Harness $VERSION for x86_64 Linux with glibc 2.28 or newer, including Red Hat Enterprise Linux 8.10. It needs no Node.js or system packages.
+
+          \`\`\`sh
+          sha256sum -c dsh-$VERSION-linux-x64.tar.gz.sha256
+          tar -xzf dsh-$VERSION-linux-x64.tar.gz
+          cd ~/my-project && /path/to/dsh-$VERSION-linux-x64/dsh web --no-open
+          \`\`\`
+
+          The archive's README.md covers remote access, the bundled command sandbox, data locations, and limitations.
+          EOF
+            gh release create "$RELEASE_TAG" "${flags[@]}" --notes-file notes.md
+          fi
+          gh release upload "$RELEASE_TAG" --clobber \
+            "dist-portable/dsh-$VERSION-linux-x64.tar.gz" \
+            "dist-portable/dsh-$VERSION-linux-x64.tar.gz.sha256"

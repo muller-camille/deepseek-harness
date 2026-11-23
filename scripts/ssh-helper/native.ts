@@ -4,13 +4,44 @@ import { open } from 'node:fs/promises'
 import { join } from 'node:path'
 import { payloadFiles, type SshHelperTarget } from './artifact.ts'
 
-function newer(version: string, ceiling: number[]): boolean {
+function newer(version: string, ceiling: readonly number[]): boolean {
   const components = version.split('.').map(Number)
   for (let index = 0; index < Math.max(components.length, ceiling.length); index += 1) {
     const difference = (components[index] ?? 0) - (ceiling[index] ?? 0)
     if (difference !== 0) return difference > 0
   }
   return false
+}
+
+/** manylinux_2_28 symbol-version ceilings, which RHEL 8's glibc 2.28, libstdc++ 6.0.25, and libgcc_s provide. */
+const LINUX_SYMBOL_VERSION_CEILINGS: Readonly<Record<string, readonly number[]>> = {
+  GLIBC: [2, 28],
+  GLIBCXX: [3, 4, 25],
+  CXXABI: [1, 3, 11],
+  GCC: [7, 0, 0],
+}
+
+/**
+ * List required symbol versions that exceed the Linux deployment baseline.
+ * @param output - `readelf --version-info` text for one ELF file.
+ * @returns each required `<family>_<version>` above its ceiling; version definitions and symbol tables are ignored.
+ */
+export function linuxSymbolVersionViolations(output: string): string[] {
+  const violations: string[] = []
+  let needs = false
+  for (const line of output.split('\n')) {
+    const section = /^Version (\w+) section '/.exec(line.trim())
+    if (section !== null) {
+      needs = section[1] === 'needs'
+      continue
+    }
+    const match = needs ? /\bName: (GLIBCXX|GLIBC|CXXABI|GCC)_(\d+(?:\.\d+)*)(?=\s|$)/.exec(line) : null
+    if (match === null) continue
+    const family = match[1] as string
+    const version = match[2] as string
+    if (newer(version, LINUX_SYMBOL_VERSION_CEILINGS[family] as readonly number[])) violations.push(`${family}_${version}`)
+  }
+  return violations
 }
 
 /**
@@ -40,10 +71,21 @@ export function macosDeploymentVersions(output: string): string[] {
  * @returns relative paths of inspected native files.
  */
 export async function verifyNativePayload(directory: string, target: SshHelperTarget): Promise<string[]> {
+  return verifyNativeFiles(directory, await payloadFiles(directory), target)
+}
+
+/**
+ * Inspect the selected files of a directory; non-native files are skipped.
+ * @param directory - root that the relative paths name files under.
+ * @param paths - POSIX relative paths of regular files to inspect.
+ * @param target - build target whose ABI must match every native file.
+ * @returns relative paths of inspected native files; the first violation rejects.
+ */
+export async function verifyNativeFiles(directory: string, paths: readonly string[], target: SshHelperTarget): Promise<string[]> {
   const inspected: string[] = []
   const linux = target.includes('-linux-')
   const arch = target.endsWith('-arm64') ? 'arm64' : 'x64'
-  for (const path of await payloadFiles(directory)) {
+  for (const path of paths) {
     const filename = join(directory, path)
     const file = await open(filename, 'r')
     const header = Buffer.alloc(4)
@@ -57,10 +99,8 @@ export async function verifyNativePayload(directory: string, target: SshHelperTa
       const elfHeader = execFileSync('readelf', ['--file-header', filename], { encoding: 'utf8' })
       const expected = arch === 'arm64' ? /Machine:\s+AArch64/ : /Machine:\s+Advanced Micro Devices X86-64/
       if (!expected.test(elfHeader)) throw new Error(`ELF architecture differs from ${target}: ${path}`)
-      const versions = execFileSync('readelf', ['--version-info', filename], { encoding: 'utf8' })
-      for (const match of versions.matchAll(/\bGLIBC_(\d+(?:\.\d+)+)/g)) {
-        if (newer(match[1] as string, [2, 28])) throw new Error(`${path} requires GLIBC_${match[1]}, exceeding 2.28`)
-      }
+      const violations = linuxSymbolVersionViolations(execFileSync('readelf', ['--version-info', filename], { encoding: 'utf8' }))
+      if (violations.length > 0) throw new Error(`${path} requires ${violations.join(', ')}, exceeding the manylinux_2_28 baseline`)
     } else {
       execFileSync('lipo', [filename, '-verify_arch', arch === 'arm64' ? 'arm64' : 'x86_64'], { stdio: 'pipe' })
       const loads = execFileSync('otool', ['-l', filename], { encoding: 'utf8' })

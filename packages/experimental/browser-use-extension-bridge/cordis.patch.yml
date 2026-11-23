@@ -1,0 +1,7 @@
+# Opt-in browser bridge bundle: browser tools that operate the user's own Chrome
+# through the DeepSeek Harness extension. Shipped profiles do not include this layer.
+- insert:
+    - id: browser-use
+      name: '@deepseek-ai/dsh-browser-use'
+    - id: browser-use-extension-bridge
+      name: '@deepseek-ai/dsh-browser-use-extension-bridge'
