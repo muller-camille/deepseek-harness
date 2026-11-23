@@ -49,6 +49,16 @@ dsh --profile headless "Summarize this repository"
 
 The [CLI reference](../../../apps/cli/README.md) lists the modes.
 
+## Browse with your own Chrome
+
+The agent can open, read, and operate pages in the Chrome on your computer, with your signed-in sessions, through the bundled browser extension. The extension connects through the Web UI tab, so nothing listens on your computer.
+
+1. In the Web UI, open **Plugins** and switch on **Browser use (your Chrome)**.
+2. Copy the archive's `browser-extension` directory to the computer that opens the Web UI. In Chrome, open `chrome://extensions`, turn on **Developer mode**, select **Load unpacked**, and choose that directory.
+3. In the extension's options, add the Web UI address, then add each site the agent may use.
+
+Keep the Web UI tab open while the agent browses; it works in a tab group named "DSH agent". The [browser bridge reference](../../../packages/experimental/browser-use-extension-bridge/README.md) describes the tools and their limits.
+
 ## Command sandbox
 
 The agent runs shell commands in a sandbox that limits writes to the workspace. On Linux the sandbox uses bubblewrap or Landlock. The RHEL 8 kernel has no Landlock and server installations usually lack bubblewrap, so the archive includes a static bubblewrap build at `libexec/sandbox/bwrap`. The launcher appends that directory to `PATH`, so a `bwrap` already installed on the host takes precedence.
@@ -64,6 +74,7 @@ bubblewrap requires unprivileged user namespaces, which RHEL 8 enables by defaul
 | `libexec/dsh-rg` | ripgrep for the search tools |
 | `libexec/sandbox/bwrap` | Static bubblewrap for the command sandbox |
 | `libexec/linux-x64/downloads.json` | Locked sources of optional runtime downloads |
+| `browser-extension/` | Chrome extension for browsing with your own Chrome |
 | `licenses/` | Licenses of bundled components outside `THIRD_PARTY_NOTICES.md` |
 
 Sessions, settings, and credentials live in `~/.dsh`, or in `$DSH_HOME` when it is set. The executable extracts its native modules to `~/.cache/pkg` on first use; set `PKG_NATIVE_CACHE_PATH` to another directory when the home directory is mounted `noexec`. To uninstall, delete the extracted directory, then delete `~/.dsh` and `~/.cache/pkg` if their data is no longer needed.

@@ -9,7 +9,7 @@
 
 import { execFileSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
-import { chmod, copyFile, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { chmod, copyFile, cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { basename, join, matchesGlob, resolve } from 'node:path'
 import { parseArgs } from 'node:util'
@@ -127,6 +127,8 @@ export async function buildPortableLinuxRelease(argv: string[]): Promise<string>
     await place(join(root, 'docs/user/guide/portable-linux.md'), join(product, 'README.md'), 0o644)
     await place(join(root, 'LICENSE'), join(product, 'LICENSE'), 0o644)
     await place(join(root, 'THIRD_PARTY_NOTICES.md'), join(product, 'THIRD_PARTY_NOTICES.md'), 0o644)
+    // The browser bridge bundle's Chrome extension, loaded unpacked on the computer that opens the Web UI.
+    await cp(join(root, 'packages/experimental/browser-use-extension-bridge/extension'), join(product, 'browser-extension'), { recursive: true })
     const native = await verifyNativePayload(product, target)
     console.log(`build-portable-linux-release: archive native files fit manylinux_2_28: ${native.join(', ')}`)
     const reported = execFileSync(join(product, 'dsh'), ['--version'], {

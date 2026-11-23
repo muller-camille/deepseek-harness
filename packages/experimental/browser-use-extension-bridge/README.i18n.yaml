@@ -1,0 +1,46 @@
+# Bilingual-pair consistency record for README.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write packages/experimental/browser-use-extension-bridge/README.md
+/:
+  en: ac650422fd946d63
+  zh: 89eeeef761b34529
+/deepseek-ai-dsh-browser-use-extension-bridge:
+  en: a5a286b7e1e5ea44
+  zh: aabbb7ddf347d393
+/deepseek-ai-dsh-browser-use-extension-bridge/summary:
+  en: 8c87b0cabcc4e0c8
+  zh: 453df4f7a6988c8d
+/deepseek-ai-dsh-browser-use-extension-bridge/table-of-contents:
+  en: d152484eb41ac6b4
+  zh: ea2227f28624a0e6
+/deepseek-ai-dsh-browser-use-extension-bridge/use-this-package:
+  en: e44bba0afeb00260
+  zh: 18b4a8ed57717303
+/deepseek-ai-dsh-browser-use-extension-bridge/understand-the-implementation:
+  en: 0aa16c2b3a085fba
+  zh: 4cdadd8d12cd745a
+/deepseek-ai-dsh-browser-use-extension-bridge/further-exploration:
+  en: b2b71f27d735cdc4
+  zh: f30afc2307673c77
+/deepseek-ai-dsh-browser-use-extension-bridge/model-experience:
+  en: 215e7ba838619b7b
+  zh: a311da3843709f90
+/deepseek-ai-dsh-browser-use-extension-bridge/model-experience/browser-tools:
+  en: 20e64cb76e884e37
+  zh: 9060a15b6cbb540b
+/deepseek-ai-dsh-browser-use-extension-bridge/model-experience/browser-tools/what-the-model-sees:
+  en: 3ad923f3e685eaee
+  zh: cce150295088568d
+/deepseek-ai-dsh-browser-use-extension-bridge/model-experience/browser-tools/token-effect:
+  en: 192ba543752fc900
+  zh: ebe44adaf080e2c8
+/deepseek-ai-dsh-browser-use-extension-bridge/model-experience/browser-tools/kv-cache-effect:
+  en: 868f7ae4b3b39dda
+  zh: 75c8e9521a9929f5
+/deepseek-ai-dsh-browser-use-extension-bridge/known-limitations-and-deferred-work:
+  en: 9fb65e16e41edafc
+  zh: 6ec9143b72cf7625
+/deepseek-ai-dsh-browser-use-extension-bridge/known-limitations-and-deferred-work/dev-note:
+  en: e889895ffaa82943
+  zh: 1a49fe0444a01b61

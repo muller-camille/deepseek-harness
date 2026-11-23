@@ -29,6 +29,7 @@ useradd -m -u "$SMOKE_UID" -o smoke
 cat > /tmp/run.sh <<'EOF'
 set -euo pipefail
 tar -xzf "/release/$ARCHIVE" -C "$HOME"
+test -f "$HOME/$NAME/browser-extension/manifest.json"
 dsh="$HOME/$NAME/dsh"
 "$dsh" --version > /out/version.txt
 mkdir -p "$HOME/work" && cd "$HOME/work"

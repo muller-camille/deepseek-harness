@@ -49,6 +49,16 @@ dsh --profile headless "Summarize this repository"
 
 [CLI 参考](../../../apps/cli/README.zh.md)列出了所有模式。
 
+## 使用你自己的 Chrome 浏览
+
+通过随附的浏览器扩展，Agent 可以在你计算机上的 Chrome 中使用你的已登录会话打开、读取和操作网页。扩展经由 Web UI 标签页连接，因此你的计算机上不会监听任何端口。
+
+1. 在 Web UI 中打开**插件**，开启**浏览器操作（你的 Chrome）**。
+2. 把归档中的 `browser-extension` 目录复制到打开 Web UI 的计算机上。在 Chrome 中打开 `chrome://extensions`，开启**开发者模式**，选择**加载已解压的扩展程序**，然后选择该目录。
+3. 在扩展的选项中添加 Web UI 地址，然后添加 Agent 可以使用的每个站点。
+
+Agent 浏览期间请保持 Web UI 标签页打开；它在名为 "DSH agent" 的标签页组中工作。[浏览器桥接参考](../../../packages/experimental/browser-use-extension-bridge/README.zh.md)介绍了这些工具及其限制。
+
 ## 命令沙箱
 
 Agent 在沙箱中运行 shell 命令，沙箱把写入限制在工作区内。在 Linux 上，沙箱使用 bubblewrap 或 Landlock。RHEL 8 内核没有 Landlock，服务器安装通常也没有 bubblewrap，因此归档在 `libexec/sandbox/bwrap` 中附带了静态构建的 bubblewrap。启动器把该目录追加到 `PATH` 末尾，因此主机上已安装的 `bwrap` 优先。
@@ -64,6 +74,7 @@ bubblewrap 需要非特权用户命名空间，RHEL 8 默认启用该功能。�
 | `libexec/dsh-rg` | 供搜索工具使用的 ripgrep |
 | `libexec/sandbox/bwrap` | 供命令沙箱使用的静态 bubblewrap |
 | `libexec/linux-x64/downloads.json` | 可选运行时下载的锁定来源 |
+| `browser-extension/` | 用于通过你自己的 Chrome 浏览的 Chrome 扩展 |
 | `licenses/` | `THIRD_PARTY_NOTICES.md` 之外的附带组件许可证 |
 
 会话、设置和凭据保存在 `~/.dsh` 中；设置了 `$DSH_HOME` 时保存在该目录中。可执行文件在首次使用原生模块时把它们解压到 `~/.cache/pkg`；当主目录以 `noexec` 方式挂载时，请把 `PKG_NATIVE_CACHE_PATH` 设为其他目录。卸载时删除解压目录；如果不再需要其中的数据，再删除 `~/.dsh` 和 `~/.cache/pkg`。
