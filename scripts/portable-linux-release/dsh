@@ -1,0 +1,8 @@
+#!/bin/sh
+# Launcher for the portable DeepSeek Harness release: runs the bundled executable from libexec/.
+# The bundled bubblewrap directory goes last on PATH, so a bwrap already on PATH keeps precedence
+# and the command sandbox still finds a runner on hosts without one.
+here=$(dirname -- "$(readlink -f -- "$0")") || exit 1
+PATH=${PATH:+$PATH:}$here/libexec/sandbox
+export PATH
+exec "$here/libexec/dsh" "$@"

@@ -1,0 +1,28 @@
+# Bilingual-pair consistency record for portable-linux.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/user/guide/portable-linux.md
+/run-the-portable-linux-release:
+  en: 244761fe48b78b23
+  zh: 1095af5664b233f0
+/run-the-portable-linux-release/1-download-and-extract:
+  en: f90e9524626c2484
+  zh: 28bca2c87cfcc52d
+/run-the-portable-linux-release/2-start-the-web-ui:
+  en: c589ef8392623291
+  zh: a75a7b1f70e8f3ac
+/run-the-portable-linux-release/3-configure-a-model-and-a-workspace:
+  en: 80543ce236806ba5
+  zh: 03b737d087f75545
+/run-the-portable-linux-release/other-modes:
+  en: 05a8dabd79d178fb
+  zh: 818155cd847c9ffe
+/run-the-portable-linux-release/command-sandbox:
+  en: c945d01a3eed2a9a
+  zh: f05dd57729474a0b
+/run-the-portable-linux-release/files-and-data:
+  en: 2b5ee84b6637308d
+  zh: 86e9ee493d36a323
+/run-the-portable-linux-release/limitations:
+  en: 44456caed6370092
+  zh: 218919e2b28190cc

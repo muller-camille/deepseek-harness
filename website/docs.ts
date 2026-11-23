@@ -155,6 +155,14 @@ const homeAndGuide = pairedPages([
     order: 5,
   },
   {
+    source: 'docs/user/guide/portable-linux.md',
+    route: 'guide/portable-linux.md',
+    label: { root: '便携式 Linux 发行版', en: 'Portable Linux release' },
+    sidebar: { root: 'zh-guide', en: 'en-guide' },
+    section: { root: '入门', en: 'Guide' },
+    order: 6,
+  },
+  {
     source: 'docs/user/guide/python-sdk.md',
     route: 'guide/python-sdk.md',
     label: { root: 'Python', en: 'Python' },
