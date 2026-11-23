@@ -58,6 +58,9 @@ allowBuilds:
   electron-winstaller: false
   # Store-index rewriting only needs msgpackr's portable JavaScript codec.
   msgpackr-extract: false
+  # The Oracle plugin uses node-oracledb's pure-JavaScript Thin mode; the install script only
+  # reports whether the bundled Thick-mode binaries suit the host.
+  oracledb: false
   # The Feishu plugin's CLI downloads its native binary from GitHub Releases or npmmirror.
   # Repository installs skip it; profiles that install the plugin approve it separately.
   # Update the version here together with packages/connector/feishu/package.json.

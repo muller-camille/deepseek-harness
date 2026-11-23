@@ -1,0 +1,4 @@
+# Opt-in Oracle database (read-only) bundle. Shipped profiles do not include this layer.
+- insert:
+    - id: oracle-db
+      name: '@deepseek-ai/dsh-oracle-db'

@@ -70,6 +70,34 @@ dsh --profile headless "Summarize this repository"
 
 设置该变量后启动 Web UI，例如 `MY_SERVER_API_KEY=... dsh web --no-open`，然后在输入框的模型选择器中选择该模型。[配置模型](./providers.zh.md)介绍了自托管服务器常需要的协议、推理和请求兼容性设置。
 
+## 连接你的 Wiki、Oracle 和 Kibana
+
+三个实验性插件让 Agent 以只读方式访问你网络中的系统。它们默认关闭。先把设置写入 `~/.dsh/profiles/web/cordis.patch.yml`，再在**插件**中开启：
+
+| 插件 | 工具 | 设置 |
+|---|---|---|
+| **本地 Wiki（MediaWiki）** | `wiki_search`、`wiki_read` | Wiki 的 `api.php` 地址 `apiUrl` |
+| **Oracle 数据库（只读）** | `oracle_schema`、`oracle_query` | `connectString`、`user`，以及保存密码的环境变量名 `passwordEnv` |
+| **Kibana 日志与仪表板** | `kibana_data_views`、`kibana_fields`、`kibana_search`、`kibana_saved_objects`、`kibana_saved_object` | `url`，加上 `username` 和 `passwordEnv`，或 `apiKeyEnv` |
+
+```yaml
+- id: mediawiki
+  config:
+    apiUrl: http://wiki.intranet/w/api.php
+- id: oracle-db
+  config:
+    connectString: dbhost:1521/ORCLPDB1
+    user: report_reader
+    passwordEnv: ORACLE_PASSWORD
+- id: kibana
+  config:
+    url: http://kibana.intranet:5601
+    username: dsh_reader
+    passwordEnv: KIBANA_PASSWORD
+```
+
+设置好密码变量后启动 `dsh`，例如 `ORACLE_PASSWORD=... KIBANA_PASSWORD=... dsh web --no-open`；主机使用 HTTP 代理时，把这三台主机加入 `no_proxy`。请使用只能读取的数据库和 Kibana 账号。[MediaWiki](../../../packages/experimental/mediawiki/README.zh.md)、[Oracle](../../../packages/experimental/oracle-db/README.zh.md) 和 [Kibana](../../../packages/experimental/kibana/README.zh.md) 参考文档介绍了全部设置和限制。
+
 ## 使用你自己的 Chrome 浏览
 
 通过随附的浏览器扩展，Agent 可以在你计算机上的 Chrome 中使用你的已登录会话打开、读取和操作网页。扩展经由 Web UI 标签页连接，因此你的计算机上不会监听任何端口。

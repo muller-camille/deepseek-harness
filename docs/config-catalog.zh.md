@@ -2261,6 +2261,41 @@ export interface Config {
 ```
 <!-- END GENERATED config-catalog:@deepseek-ai/dsh-jobs-local -->
 
+<!-- BEGIN GENERATED config-catalog:@deepseek-ai/dsh-kibana -->
+<a id="deepseek-aidsh-kibana"></a>
+
+## `@deepseek-ai/dsh-kibana`
+
+- `inject`: `tools` · `systemPrompt`
+- `source`: [`packages/experimental/kibana/src/index.ts:25`](../packages/experimental/kibana/src/index.ts)
+
+```ts config-catalog
+/** Where Kibana is, how to authenticate, and the request and output limits. */
+export interface Config {
+  /** HTTP(S) base URL of Kibana, including any base path, such as `https://host/kibana`. */
+  url: string
+  /** Kibana space id; every API path is then prefixed with `/s/<space>`. */
+  space?: string
+  /** Username for HTTP Basic authentication with the password behind {@link passwordEnv}. */
+  username?: string
+  /** Credential reference holding the Basic authentication password; used only with {@link username}. */
+  passwordEnv?: string
+  /** Credential reference holding an encoded Kibana API key, sent as `Authorization: ApiKey <key>`. */
+  apiKeyEnv?: string
+  /** Budget for all Kibana requests of one tool call. */
+  timeoutMs?: number
+  /** Largest number of hits one search returns. */
+  maxHits?: number
+  /** Cap on the complete text one tool call returns. */
+  maxOutputChars?: number
+  /** Cap on one displayed value: a hit field, a title, a description, or a filter. */
+  maxFieldChars?: number
+  /** Elasticsearch date math that starts a search's time range when the call gives no `from`. */
+  defaultFrom?: string
+}
+```
+<!-- END GENERATED config-catalog:@deepseek-ai/dsh-kibana -->
+
 <!-- BEGIN GENERATED config-catalog:@deepseek-ai/dsh-linear -->
 <a id="deepseek-aidsh-linear"></a>
 
@@ -2917,6 +2952,29 @@ export interface McpManagedServerEntry {
 ```
 <!-- END GENERATED config-catalog:@deepseek-ai/dsh-mcp-manager -->
 
+<!-- BEGIN GENERATED config-catalog:@deepseek-ai/dsh-mediawiki -->
+<a id="deepseek-aidsh-mediawiki"></a>
+
+## `@deepseek-ai/dsh-mediawiki`
+
+- `inject`: `tools` · `systemPrompt`
+- `source`: [`packages/experimental/mediawiki/src/index.ts:23`](../packages/experimental/mediawiki/src/index.ts)
+
+```ts config-catalog
+/** The wiki address and the tools' time and size limits. */
+export interface Config {
+  /** Absolute http(s) URL of the wiki's `api.php`, such as `http://wiki.intranet/w/api.php`. */
+  apiUrl: string
+  /** Budget for one HTTP request to the wiki, including reading its answer. */
+  timeoutMs?: number
+  /** Cap on the complete text one `wiki_read` returns. */
+  maxContentChars?: number
+  /** Default and maximum number of results one `wiki_search` returns. */
+  searchLimit?: number
+}
+```
+<!-- END GENERATED config-catalog:@deepseek-ai/dsh-mediawiki -->
+
 <!-- BEGIN GENERATED config-catalog:@deepseek-ai/dsh-message-feedback -->
 <a id="deepseek-aidsh-message-feedback"></a>
 
@@ -3010,6 +3068,37 @@ export interface Config {
 }
 ```
 <!-- END GENERATED config-catalog:@deepseek-ai/dsh-office-kit -->
+
+<!-- BEGIN GENERATED config-catalog:@deepseek-ai/dsh-oracle-db -->
+<a id="deepseek-aidsh-oracle-db"></a>
+
+## `@deepseek-ai/dsh-oracle-db`
+
+- `inject`: `tools` · `systemPrompt`
+- `source`: [`packages/experimental/oracle-db/src/index.ts:27`](../packages/experimental/oracle-db/src/index.ts)
+
+```ts config-catalog
+/** The database to connect to and the limits for each tool call. */
+export interface Config {
+  /** Easy Connect string such as `dbhost:1521/ORCLPDB1`, or a full connect descriptor. */
+  connectString: string
+  /** Database user the tools sign in as; a read-only account is the real write boundary. */
+  user: string
+  /** Credential reference holding the user's password: a stored credential, else this launch environment variable. */
+  passwordEnv?: string
+  /** Most rows one query or listing returns, and the default for `max_rows`. */
+  maxRows?: number
+  /** Limit for each database round trip in milliseconds, applied as the session's `callTimeout`. */
+  queryTimeoutMs?: number
+  /** Most database sessions open at once; further queries wait for a free session. */
+  poolMax?: number
+  /** Most characters one result cell takes. */
+  maxCellChars?: number
+  /** Most characters one complete tool result takes. */
+  maxOutputChars?: number
+}
+```
+<!-- END GENERATED config-catalog:@deepseek-ai/dsh-oracle-db -->
 
 <!-- BEGIN GENERATED config-catalog:@deepseek-ai/dsh-permission-presets -->
 <a id="deepseek-aidsh-permission-presets"></a>

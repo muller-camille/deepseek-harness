@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Banco de dados Oracle (somente leitura)",
+    "description": "Deixe o modelo explorar o esquema de um banco de dados Oracle e executar consultas SELECT somente leitura."
+  }
+}

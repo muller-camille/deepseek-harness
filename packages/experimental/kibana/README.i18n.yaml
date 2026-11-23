@@ -1,0 +1,79 @@
+# Bilingual-pair consistency record for README.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write packages/experimental/kibana/README.md
+/:
+  en: d2e2445221219c17
+  zh: 4b176a5117204532
+/deepseek-ai-dsh-kibana:
+  en: dfa3281e655eb75e
+  zh: b654d284b6ffc951
+/deepseek-ai-dsh-kibana/summary:
+  en: 73415bc954f5d45b
+  zh: 6adf55f0d1b2971f
+/deepseek-ai-dsh-kibana/table-of-contents:
+  en: d152484eb41ac6b4
+  zh: ea2227f28624a0e6
+/deepseek-ai-dsh-kibana/use-this-package:
+  en: b3fe9db390da8f33
+  zh: 806f88f035c7668a
+/deepseek-ai-dsh-kibana/use-this-package/credentials:
+  en: 2574d323627c1295
+  zh: 234325c4caa49e1d
+/deepseek-ai-dsh-kibana/use-this-package/configuration:
+  en: 58244cdf9c9db30c
+  zh: 6a276f0fed04229b
+/deepseek-ai-dsh-kibana/use-this-package/tools:
+  en: 953b89a70b034de9
+  zh: e635ed702a45a798
+/deepseek-ai-dsh-kibana/use-this-package/read-only-guarantees:
+  en: c7c013d551ff7267
+  zh: 52feb55e95252e4d
+/deepseek-ai-dsh-kibana/use-this-package/kibana-privileges:
+  en: 6cf303f53377bb03
+  zh: 183812b5b92293ea
+/deepseek-ai-dsh-kibana/use-this-package/network:
+  en: 831ac78b6b65426f
+  zh: 43451ae1353e5e2c
+/deepseek-ai-dsh-kibana/understand-the-implementation:
+  en: e5d86ba3f3055e52
+  zh: 552c681019f47948
+/deepseek-ai-dsh-kibana/further-exploration:
+  en: b91931ed52429762
+  zh: 9a7f484e5258b0c9
+/deepseek-ai-dsh-kibana/model-experience:
+  en: 215e7ba838619b7b
+  zh: a311da3843709f90
+/deepseek-ai-dsh-kibana/model-experience/kibana-tools:
+  en: 4fa2b730e5823f9d
+  zh: 0fae6ec6985cf08c
+/deepseek-ai-dsh-kibana/model-experience/kibana-tools/what-the-model-sees:
+  en: 722108cca7b505f8
+  zh: aff71c37ced36a93
+/deepseek-ai-dsh-kibana/model-experience/kibana-tools/token-effect:
+  en: 59b2bac76b7376b2
+  zh: 05cf360fe188b37d
+/deepseek-ai-dsh-kibana/model-experience/kibana-tools/kv-cache-effect:
+  en: a9881f29d7f3d00b
+  zh: a1c98a09d96f0d92
+/deepseek-ai-dsh-kibana/model-experience/system-prompt-section:
+  en: c17d2aa0c515f8f3
+  zh: 6d5a34c492cfd632
+/deepseek-ai-dsh-kibana/model-experience/system-prompt-section/what-the-model-sees:
+  en: f6f3f2520dcf45b2
+  zh: 6ecbe542e7098966
+/deepseek-ai-dsh-kibana/model-experience/system-prompt-section/what-the-model-sees/kibana-guidance:
+  en: 5ed0f5caf761fecf
+  zh: 214d995daeb38dd0
+/deepseek-ai-dsh-kibana/model-experience/system-prompt-section/token-effect:
+  en: 5b697e05df9e79e4
+  zh: 47fef74679d4809c
+/deepseek-ai-dsh-kibana/model-experience/system-prompt-section/kv-cache-effect:
+  en: be73cedc4b21b318
+  zh: 9360ece7bd7f9e52
+/deepseek-ai-dsh-kibana/known-limitations-and-deferred-work:
+  en: 3f46b22d6999dff0
+  zh: 28ee4e7aafeccd58
+/deepseek-ai-dsh-kibana/known-limitations-and-deferred-work/dev-note:
+  en: 030fa34cbb802939
+  zh: 77a415de165bb338

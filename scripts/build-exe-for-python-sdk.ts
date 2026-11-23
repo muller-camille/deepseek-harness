@@ -79,6 +79,16 @@ const PUBLISHED_PAYLOAD_IGNORES = [
   '**/node_modules/@deepseek-ai/dsh/docs/**',
 ]
 
+/**
+ * Deployed directories that no load path in this runtime reaches, removed before pkg embeds the
+ * closure and the runtime wheel ships it. A listed path that is no longer deployed fails the build.
+ */
+const UNLOADED_DEPLOYED_PATHS = [
+  // node-oracledb's prebuilt Thick-mode binaries for every platform. dsh-oracle-db runs Thin mode,
+  // and node-oracledb loads these only from initOracleClient(), which the plugin never calls.
+  'node_modules/oracledb/build',
+]
+
 const PLATFORMS = ['linux', 'macos', 'win'] as const
 const ARCHES = ['x64', 'arm64'] as const
 type Platform = (typeof PLATFORMS)[number]
@@ -329,7 +339,14 @@ class SingleExeBuild {
     await this.materializeStagedLinks()
     if (this.cli.dryRun) {
       for (const name of DEPLOY_ONLY_DOCS) console.log(`build-exe-for-python-sdk: [dry-run] rm -f ${join(this.staging, name)}`)
+      for (const path of UNLOADED_DEPLOYED_PATHS) console.log(`build-exe-for-python-sdk: [dry-run] rm -rf ${join(this.staging, path)}`)
     } else {
+      for (const path of UNLOADED_DEPLOYED_PATHS) {
+        if (!existsSync(join(this.staging, path))) {
+          throw new Error(`build-exe-for-python-sdk: ${path} is no longer deployed; remove it from UNLOADED_DEPLOYED_PATHS.`)
+        }
+        await rm(join(this.staging, path), { recursive: true, force: true })
+      }
       await Promise.all(DEPLOY_ONLY_DOCS.map(name => rm(join(this.staging, name), { force: true })))
       for await (const file of glob('node_modules/**/{README*.md,CHANGELOG*.md,HISTORY*.md,*.map,*.d.ts,*.d.mts,*.d.cts}', {
         cwd: this.staging, exclude: ['node_modules/**/assets/**'],

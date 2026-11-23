@@ -70,6 +70,34 @@ Add your server in **Settings → Models → Add model provider → Custom model
 
 Start the Web UI with that variable set, for example `MY_SERVER_API_KEY=... dsh web --no-open`, then choose the model in the composer's model picker. [Configure models](./providers.md) covers the protocol, reasoning, and request-compatibility settings that self-hosted servers often need.
 
+## Connect to your wiki, Oracle, and Kibana
+
+Three experimental plugins give the agent read-only access to systems on your network. Each is off by default. Add its settings to `~/.dsh/profiles/web/cordis.patch.yml`, then switch it on in **Plugins**:
+
+| Plugin | Tools | Settings |
+|---|---|---|
+| **Local wiki (MediaWiki)** | `wiki_search`, `wiki_read` | `apiUrl` of the wiki's `api.php` |
+| **Oracle database (read-only)** | `oracle_schema`, `oracle_query` | `connectString`, `user`, and `passwordEnv`, the variable that holds the password |
+| **Kibana logs and dashboards** | `kibana_data_views`, `kibana_fields`, `kibana_search`, `kibana_saved_objects`, `kibana_saved_object` | `url`, plus `username` and `passwordEnv`, or `apiKeyEnv` |
+
+```yaml
+- id: mediawiki
+  config:
+    apiUrl: http://wiki.intranet/w/api.php
+- id: oracle-db
+  config:
+    connectString: dbhost:1521/ORCLPDB1
+    user: report_reader
+    passwordEnv: ORACLE_PASSWORD
+- id: kibana
+  config:
+    url: http://kibana.intranet:5601
+    username: dsh_reader
+    passwordEnv: KIBANA_PASSWORD
+```
+
+Start `dsh` with the password variables set, for example `ORACLE_PASSWORD=... KIBANA_PASSWORD=... dsh web --no-open`, and list the three hosts in `no_proxy` when the host uses an HTTP proxy. Use database and Kibana accounts that can only read. The [MediaWiki](../../../packages/experimental/mediawiki/README.md), [Oracle](../../../packages/experimental/oracle-db/README.md), and [Kibana](../../../packages/experimental/kibana/README.md) references describe every setting and limit.
+
 ## Browse with your own Chrome
 
 The agent can open, read, and operate pages in the Chrome on your computer, with your signed-in sessions, through the bundled browser extension. The extension connects through the Web UI tab, so nothing listens on your computer.

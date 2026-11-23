@@ -26,6 +26,9 @@ export const EXPERIMENTAL_PACKAGE_NAME_EXCEPTIONS: Readonly<Record<string, strin
   'packages/experimental/forge-gitlab': '@deepseek-ai/dsh-forge-gitlab',
   'packages/experimental/deepseek-chat-import': '@deepseek-ai/dsh-deepseek-chat-import',
   'packages/experimental/browser-use-extension-bridge': '@deepseek-ai/dsh-browser-use-extension-bridge',
+  'packages/experimental/kibana': '@deepseek-ai/dsh-kibana',
+  'packages/experimental/mediawiki': '@deepseek-ai/dsh-mediawiki',
+  'packages/experimental/oracle-db': '@deepseek-ai/dsh-oracle-db',
 } satisfies Record<`packages/experimental/${string}`, `@deepseek-ai/dsh-${string}`>
 
 /** Legacy npm namespace, allowed only in `LEGACY_PREFIXED_EXPERIMENTAL_PACKAGE_DIRECTORIES`. */

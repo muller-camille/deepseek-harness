@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Journaux et tableaux de bord Kibana",
+    "description": "Laissez le modèle rechercher dans les journaux et lire les tableaux de bord, visualisations et recherches enregistrées via votre Kibana."
+  }
+}

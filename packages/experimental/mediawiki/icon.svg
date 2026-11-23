@@ -1,0 +1,11 @@
+<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M18 11.2C15.4 9.4 11.6 8.7 7 9V26.4C11.6 26.1 15.4 26.8 18 28.6C20.6 26.8 24.4 26.1 29 26.4V9C24.4 8.7 20.6 9.4 18 11.2Z" fill="url(#mediawiki-book)" fill-opacity="0.85" />
+  <path d="M18 11.2V28.6" stroke="#FFFFFF" stroke-opacity="0.8" stroke-width="1.2" />
+  <path d="M10 13.6C11.9 13.5 13.6 13.8 15.2 14.5M10 17C11.9 16.9 13.6 17.2 15.2 17.9M10 20.4C11.9 20.3 13.6 20.6 15.2 21.3M26 13.6C24.1 13.5 22.4 13.8 20.8 14.5M26 17C24.1 16.9 22.4 17.2 20.8 17.9M26 20.4C24.1 20.3 22.4 20.6 20.8 21.3" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" />
+  <defs>
+    <linearGradient id="mediawiki-book" x1="18" y1="9" x2="18" y2="28.6" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7AE3CF" />
+      <stop offset="1" stop-color="#2C9A8B" />
+    </linearGradient>
+  </defs>
+</svg>
