@@ -49,6 +49,27 @@ dsh --profile headless "Summarize this repository"
 
 [CLI 参考](../../../apps/cli/README.zh.md)列出了所有模式。
 
+## 只使用你自己的模型服务器
+
+发行版还提供 `dsh-<version>-linux-x64-local.tar.gz`，它从不连接 DeepSeek 运营的服务；在上面的步骤中用它代替标准归档即可。它的启动器会为所启动的 profile 加上 `libexec/local-only/` 中的覆盖层，从而禁用 DeepSeek 模型路由及其模型列表、DeepSeek 账号登录、DeepSeek 网页搜索与抓取、只有官方 DeepSeek 请求才携带的请求扩展，以及向 DeepSeek OpenTelemetry 收集器上传反馈。此后模型只来自你添加的提供方，`web_search` 会报告没有可用的搜索提供方。
+
+在**设置 → 模型 → 添加模型提供方 → 自定义模型 API** 中添加你的服务器，或者写入 `~/.dsh/profiles/web/cordis.patch.yml`。`apiKeyEnv` 填写保存密钥的环境变量名，而不是密钥本身：
+
+```yaml
+- id: llm-pi-ai
+  config:
+    providers:
+      my-server:
+        apiKeyEnv: MY_SERVER_API_KEY
+        api: openai-completions
+        baseURL: http://model-host:8080/v1
+        models:
+          - id: my-model
+            contextWindow: 32768
+```
+
+设置该变量后启动 Web UI，例如 `MY_SERVER_API_KEY=... dsh web --no-open`，然后在输入框的模型选择器中选择该模型。[配置模型](./providers.zh.md)介绍了自托管服务器常需要的协议、推理和请求兼容性设置。
+
 ## 使用你自己的 Chrome 浏览
 
 通过随附的浏览器扩展，Agent 可以在你计算机上的 Chrome 中使用你的已登录会话打开、读取和操作网页。扩展经由 Web UI 标签页连接，因此你的计算机上不会监听任何端口。
@@ -74,12 +95,13 @@ bubblewrap 需要非特权用户命名空间，RHEL 8 默认启用该功能。�
 | `libexec/dsh-rg` | 供搜索工具使用的 ripgrep |
 | `libexec/sandbox/bwrap` | 供命令沙箱使用的静态 bubblewrap |
 | `libexec/linux-x64/downloads.json` | 可选运行时下载的锁定来源 |
+| `libexec/local-only/` | 仅限本地归档：启动器为每个 profile 加上的覆盖层，以及用于自定义 profile 的 `default.yml` |
 | `browser-extension/` | 用于通过你自己的 Chrome 浏览的 Chrome 扩展 |
 | `licenses/` | `THIRD_PARTY_NOTICES.md` 之外的附带组件许可证 |
 
 会话、设置和凭据保存在 `~/.dsh` 中；设置了 `$DSH_HOME` 时保存在该目录中。可执行文件在首次使用原生模块时把它们解压到 `~/.cache/pkg`；当主目录以 `noexec` 方式挂载时，请把 `PKG_NATIVE_CACHE_PATH` 设为其他目录。卸载时删除解压目录；如果不再需要其中的数据，再删除 `~/.dsh` 和 `~/.cache/pkg`。
 
-发往 DeepSeek 官方 API 的请求默认附带会话日志，显式反馈会通过 OpenTelemetry 上传会话。[CLI 参考](../../../apps/cli/reference/README.zh.md)说明了这两种上传以及关闭方式；`DSH_TELEMETRY_DISABLED=1` 会关闭 OpenTelemetry 上传。
+发往 DeepSeek 官方 API 的请求默认附带会话日志，显式反馈会通过 OpenTelemetry 上传会话。[CLI 参考](../../../apps/cli/reference/README.zh.md)说明了这两种上传以及关闭方式；`DSH_TELEMETRY_DISABLED=1` 会关闭 OpenTelemetry 上传。本地归档不进行这两种上传。
 
 ## 限制
 

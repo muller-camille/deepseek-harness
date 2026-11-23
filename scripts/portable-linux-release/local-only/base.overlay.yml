@@ -1,0 +1,33 @@
+# Local-only release overlay for profiles built on dsh-base (web, headless, acp, sdk) and for
+# custom profiles. Each row below contacts a DeepSeek-operated service; with all of them disabled,
+# models come only from providers the user configures, such as a self-hosted OpenAI-compatible
+# server added as a custom model API. A patch only warns about an id it cannot find, so
+# build-portable-linux-release fails the build unless every id here is disabled in its profiles.
+
+# Official API-key model route and its model listing (api.deepseek.com).
+- id: llm-deepseek
+  disabled: true
+
+# DeepSeek account model route.
+- id: llm-deepseek-account
+  disabled: true
+
+# DeepSeek account sign-in and account service (platform.deepseek.com, harness.deepseek.com).
+- id: deepseek-account
+  disabled: true
+
+# DeepSeek web search and the DeepSeek Search and Fetch APIs.
+- id: web-search-deepseek
+  disabled: true
+- id: web-deepseek-api
+  disabled: true
+
+# Request extensions that only official DeepSeek requests carry.
+- id: session-log-deepseek
+  disabled: true
+- id: plugin-package-inventory-deepseek
+  disabled: true
+
+# Feedback-triggered session upload to the DeepSeek OpenTelemetry collector.
+- id: session-telemetry-otel
+  disabled: true

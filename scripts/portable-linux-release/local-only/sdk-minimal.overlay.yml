@@ -1,0 +1,12 @@
+# Local-only release overlay for the sdk-minimal profile, which mounts only these DeepSeek rows
+# of the ones base.overlay.yml disables.
+
+# Official API-key model route and its model listing (api.deepseek.com).
+- id: llm-deepseek
+  disabled: true
+
+# Request extensions that only official DeepSeek requests carry.
+- id: session-log-deepseek
+  disabled: true
+- id: plugin-package-inventory-deepseek
+  disabled: true

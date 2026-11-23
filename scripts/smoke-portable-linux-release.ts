@@ -1,14 +1,17 @@
 /**
  * Smoke-test a portable Linux release archive as an unprivileged user in a RHEL 8.10 (UBI 8) container
  * that has no Node.js. A host-side mock model drives one headless turn whose bash tool call must run
- * under the bundled bubblewrap, and the Web UI must serve its authenticated page.
+ * under the bundled bubblewrap, and the Web UI must serve its authenticated page. A `-local` archive
+ * reaches the mock through a custom model API route while DEEPSEEK_BASE_URL names a canary server
+ * that must receive no request.
  *
- * Usage: pnpm exec tsx scripts/smoke-portable-linux-release.ts --archive=<dsh-...-linux-x64.tar.gz>
+ * Usage: pnpm exec tsx scripts/smoke-portable-linux-release.ts --archive=<dsh-...-linux-x64[-local].tar.gz>
  * Requires docker on a Linux host whose architecture matches the archive.
  */
 
 import { spawn } from 'node:child_process'
-import { chmod, mkdir, mkdtemp, readFile, readdir, rm } from 'node:fs/promises'
+import { chmod, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises'
+import { createServer as createHttpServer } from 'node:http'
 import { createServer } from 'node:net'
 import { tmpdir } from 'node:os'
 import { basename, dirname, join, resolve } from 'node:path'
@@ -53,6 +56,47 @@ async function freePort(): Promise<number> {
   return address.port
 }
 
+/**
+ * Headless profile patch that routes the default model to the mock through a custom model API.
+ * @param baseURL - mock server origin; the Messages protocol appends `/v1/messages`.
+ * @returns the profile's cordis.patch.yml.
+ */
+export function localModelPatch(baseURL: string): string {
+  return [
+    '- id: llm-pi-ai',
+    '  config:',
+    '    providers:',
+    '      local:',
+    '        apiKeyEnv: LOCAL_MODEL_API_KEY',
+    '        api: anthropic-messages',
+    `        baseURL: ${JSON.stringify(baseURL)}`,
+    '        models:',
+    '          - id: mock-model',
+    '- id: agent-default-model',
+    '  config:',
+    '    provider: local',
+    '    model: mock-model',
+    '',
+  ].join('\n')
+}
+
+/** Count every request to a server standing in for DeepSeek-operated services. */
+async function startCanary(): Promise<{ readonly url: string; readonly hits: () => number; readonly close: () => Promise<void> }> {
+  let hits = 0
+  const server = createHttpServer((_request, response) => {
+    hits += 1
+    response.writeHead(503).end()
+  })
+  await new Promise<void>((done) => { server.listen(0, '127.0.0.1', done) })
+  const address = server.address()
+  if (address === null || typeof address === 'string') throw new Error('smoke-portable-linux-release: no canary port was assigned')
+  return {
+    url: `http://127.0.0.1:${address.port}`,
+    hits: () => hits,
+    close: () => new Promise<void>((done) => { server.close(() => { done() }) }),
+  }
+}
+
 /** Run one command with inherited output; a non-zero exit rejects. */
 async function run(command: string, args: string[]): Promise<void> {
   await new Promise<void>((done, fail) => {
@@ -90,8 +134,10 @@ export async function smokePortableLinuxRelease(argv: string[]): Promise<void> {
   if (values.archive === undefined) throw new Error('smoke-portable-linux-release: --archive=<path> is required.')
   const archive = resolve(values.archive)
   const name = basename(archive, '.tar.gz')
-  const version = /^dsh-(.+)-linux-(?:x64|arm64)$/.exec(name)?.[1]
-  if (version === undefined) throw new Error(`smoke-portable-linux-release: ${archive} is not a dsh-<version>-linux-<arch>.tar.gz archive.`)
+  const parsed = /^dsh-(.+)-linux-(?:x64|arm64)(-local)?$/.exec(name)
+  const version = parsed?.[1]
+  if (version === undefined) throw new Error(`smoke-portable-linux-release: ${archive} is not a dsh-<version>-linux-<arch>[-local].tar.gz archive.`)
+  const localOnly = parsed?.[2] !== undefined
   const model = await startMockLlmServer({
     apiKey: 'mock-key',
     // The concurrent title request may take either scripted tool call; the turn still receives one.
@@ -101,6 +147,7 @@ export async function smokePortableLinuxRelease(argv: string[]): Promise<void> {
     toolArguments: JSON.stringify({ command: PROBE, description: 'Report the host release' }),
     successText: ANSWER,
   })
+  const canary = await startCanary()
   const work = await mkdtemp(join(tmpdir(), 'dsh-portable-smoke-'))
   try {
     const home = join(work, 'home')
@@ -109,6 +156,15 @@ export async function smokePortableLinuxRelease(argv: string[]): Promise<void> {
       await mkdir(directory)
       await chmod(directory, 0o777)
     }
+    if (localOnly) {
+      const profile = join(home, 'profiles', 'headless')
+      await mkdir(profile, { recursive: true })
+      await writeFile(join(profile, 'cordis.patch.yml'), localModelPatch(model.baseURL))
+      await chmod(join(home, 'profiles'), 0o777)
+      await chmod(profile, 0o777)
+    }
+    // The local-only archive must leave DeepSeek's routes to the canary unused; the standard one uses them.
+    const deepseekBaseURL = localOnly ? `${canary.url}/v1` : `${model.baseURL}/v1`
     const uid = process.getuid?.() ?? 0
     await run('docker', [
       'run', '--rm', '--network', 'host',
@@ -118,7 +174,8 @@ export async function smokePortableLinuxRelease(argv: string[]): Promise<void> {
       '-v', `${dirname(archive)}:/release:ro`, '-v', `${home}:/dsh-home`, '-v', `${out}:/out`,
       '-e', `SMOKE_UID=${uid === 0 ? 1000 : uid}`, '-e', `ARCHIVE=${basename(archive)}`, '-e', `NAME=${name}`,
       '-e', `WEB_PORT=${await freePort()}`, '-e', 'DSH_HOME=/dsh-home', '-e', 'DSH_TELEMETRY_DISABLED=1',
-      '-e', 'DEEPSEEK_API_KEY=mock-key', '-e', `DEEPSEEK_BASE_URL=${model.baseURL}/v1`,
+      '-e', 'DEEPSEEK_API_KEY=mock-key', '-e', `DEEPSEEK_BASE_URL=${deepseekBaseURL}`, '-e', 'LOCAL_MODEL_API_KEY=mock-key',
+      '-e', `DSH_TELEMETRY_OTLP_URL=${canary.url}/v1/logs`,
       IMAGE, 'bash', '-c', CONTAINER_SCRIPT,
     ])
     const read = async (file: string) => (await readFile(join(out, file), 'utf8')).trim()
@@ -131,7 +188,12 @@ export async function smokePortableLinuxRelease(argv: string[]): Promise<void> {
     expectIncludes('bash tool result', log, "cannot touch '/etc/dsh-sandbox-probe': Read-only file system")
     if (await read('web-status.txt') !== '200') throw new Error(`smoke-portable-linux-release: Web UI returned HTTP ${await read('web-status.txt')}`)
     expectIncludes('Web UI page', await read('web.html'), '<title>DeepSeek Harness</title>')
+    if (localOnly) {
+      if (canary.hits() !== 0) throw new Error(`smoke-portable-linux-release: the DeepSeek canary received ${canary.hits()} request(s)`)
+      console.log('smoke-portable-linux-release: the DeepSeek canary received no request')
+    }
   } finally {
+    await canary.close()
     await model.close()
     await rm(work, { recursive: true, force: true })
   }

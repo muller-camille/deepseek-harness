@@ -1,0 +1,10 @@
+# Local-only release overlay added to base.overlay.yml for the web profile. These rows exist only
+# there: without the DeepSeek account service, they would offer a sign-in that cannot work.
+
+# Account menu with the DeepSeek sign-in entry.
+- id: ui-settings-account
+  disabled: true
+
+# Server-authored DeepSeek account notifications.
+- id: ui-account-notifications
+  disabled: true

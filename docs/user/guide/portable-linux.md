@@ -49,6 +49,27 @@ dsh --profile headless "Summarize this repository"
 
 The [CLI reference](../../../apps/cli/README.md) lists the modes.
 
+## Use only your own model server
+
+The release also offers `dsh-<version>-linux-x64-local.tar.gz`, which never contacts DeepSeek-operated services; use it in place of the standard archive in the steps above. Its launcher adds the overlay in `libexec/local-only/` for the profile it starts, which disables the DeepSeek model routes and their model listing, DeepSeek account sign-in, DeepSeek web search and fetch, the request extensions that only official DeepSeek requests carry, and the feedback upload to DeepSeek's OpenTelemetry collector. Models then come only from providers you add, and `web_search` reports that no search provider is available.
+
+Add your server in **Settings → Models → Add model provider → Custom model API**, or in `~/.dsh/profiles/web/cordis.patch.yml`. `apiKeyEnv` names the environment variable that holds the key, never the key itself:
+
+```yaml
+- id: llm-pi-ai
+  config:
+    providers:
+      my-server:
+        apiKeyEnv: MY_SERVER_API_KEY
+        api: openai-completions
+        baseURL: http://model-host:8080/v1
+        models:
+          - id: my-model
+            contextWindow: 32768
+```
+
+Start the Web UI with that variable set, for example `MY_SERVER_API_KEY=... dsh web --no-open`, then choose the model in the composer's model picker. [Configure models](./providers.md) covers the protocol, reasoning, and request-compatibility settings that self-hosted servers often need.
+
 ## Browse with your own Chrome
 
 The agent can open, read, and operate pages in the Chrome on your computer, with your signed-in sessions, through the bundled browser extension. The extension connects through the Web UI tab, so nothing listens on your computer.
@@ -74,12 +95,13 @@ bubblewrap requires unprivileged user namespaces, which RHEL 8 enables by defaul
 | `libexec/dsh-rg` | ripgrep for the search tools |
 | `libexec/sandbox/bwrap` | Static bubblewrap for the command sandbox |
 | `libexec/linux-x64/downloads.json` | Locked sources of optional runtime downloads |
+| `libexec/local-only/` | Local-only archive only: the overlay the launcher adds for each profile, and `default.yml` for custom profiles |
 | `browser-extension/` | Chrome extension for browsing with your own Chrome |
 | `licenses/` | Licenses of bundled components outside `THIRD_PARTY_NOTICES.md` |
 
 Sessions, settings, and credentials live in `~/.dsh`, or in `$DSH_HOME` when it is set. The executable extracts its native modules to `~/.cache/pkg` on first use; set `PKG_NATIVE_CACHE_PATH` to another directory when the home directory is mounted `noexec`. To uninstall, delete the extracted directory, then delete `~/.dsh` and `~/.cache/pkg` if their data is no longer needed.
 
-Requests to the official DeepSeek API include the session log by default, and explicit feedback uploads the session through OpenTelemetry. The [CLI reference](../../../apps/cli/reference/README.md) describes both uploads and how to turn them off; `DSH_TELEMETRY_DISABLED=1` turns off the OpenTelemetry upload.
+Requests to the official DeepSeek API include the session log by default, and explicit feedback uploads the session through OpenTelemetry. The [CLI reference](../../../apps/cli/reference/README.md) describes both uploads and how to turn them off; `DSH_TELEMETRY_DISABLED=1` turns off the OpenTelemetry upload. The local-only archive performs neither upload.
 
 ## Limitations
 

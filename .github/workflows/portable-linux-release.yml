@@ -1,7 +1,8 @@
 name: Release (portable Linux)
 
-# Builds the portable Linux archive described in docs/user/guide/portable-linux.md, smoke-tests it on
-# RHEL 8.10 (UBI 8) without Node.js, and attaches it to a GitHub release. Pushing the
+# Builds the portable Linux archives described in docs/user/guide/portable-linux.md, the standard one
+# and the local-only one that contacts no DeepSeek-operated service, smoke-tests both on RHEL 8.10
+# (UBI 8) without Node.js, and attaches them to a GitHub release. Pushing the
 # portable-linux-v<version> tag publishes; a manual dispatch validates any ref and publishes only from
 # that tag.
 on:
@@ -10,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       publish:
-        description: Publish the verified archive to a GitHub release. Must run from the matching portable-linux-v<version> tag.
+        description: Publish the verified archives to a GitHub release. Must run from the matching portable-linux-v<version> tag.
         type: boolean
         required: true
         default: false
@@ -83,10 +84,10 @@ jobs:
       - name: Build static bubblewrap
         run: scripts/portable-linux-release/build-bubblewrap.sh dist-portable/bubblewrap
 
-      - name: Package the portable archive
-        run: >-
-          pnpm exec tsx scripts/build-portable-linux-release.ts
-          --target=node24-linux-x64 --bubblewrap=dist-portable/bubblewrap
+      - name: Package the portable archives
+        run: |
+          pnpm exec tsx scripts/build-portable-linux-release.ts --target=node24-linux-x64 --bubblewrap=dist-portable/bubblewrap
+          pnpm exec tsx scripts/build-portable-linux-release.ts --target=node24-linux-x64 --bubblewrap=dist-portable/bubblewrap --local-only
 
       - name: Allow unprivileged user namespaces for the sandbox smoke
         run: |
@@ -97,7 +98,9 @@ jobs:
       - name: Smoke-test on RHEL 8.10
         env:
           VERSION: ${{ steps.version.outputs.version }}
-        run: pnpm exec tsx scripts/smoke-portable-linux-release.ts --archive="dist-portable/dsh-$VERSION-linux-x64.tar.gz"
+        run: |
+          pnpm exec tsx scripts/smoke-portable-linux-release.ts --archive="dist-portable/dsh-$VERSION-linux-x64.tar.gz"
+          pnpm exec tsx scripts/smoke-portable-linux-release.ts --archive="dist-portable/dsh-$VERSION-linux-x64-local.tar.gz"
 
       - uses: actions/upload-artifact@v7.0.1
         with:
@@ -105,6 +108,8 @@ jobs:
           path: |
             dist-portable/dsh-${{ steps.version.outputs.version }}-linux-x64.tar.gz
             dist-portable/dsh-${{ steps.version.outputs.version }}-linux-x64.tar.gz.sha256
+            dist-portable/dsh-${{ steps.version.outputs.version }}-linux-x64-local.tar.gz
+            dist-portable/dsh-${{ steps.version.outputs.version }}-linux-x64-local.tar.gz.sha256
           if-no-files-found: error
           compression-level: 0
 
@@ -121,7 +126,7 @@ jobs:
           name: dsh-${{ needs.build.outputs.version }}-linux-x64
           path: dist-portable
 
-      - name: Attach the verified archive to the GitHub release
+      - name: Attach the verified archives to the GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
@@ -141,10 +146,14 @@ jobs:
           cd ~/my-project && /path/to/dsh-$VERSION-linux-x64/dsh web --no-open
           \`\`\`
 
-          The archive's README.md covers remote access, the bundled command sandbox, data locations, and limitations.
+          \`dsh-$VERSION-linux-x64-local.tar.gz\` is the local-only variant: it never contacts DeepSeek-operated services, so models come only from providers you configure, such as a self-hosted OpenAI-compatible server.
+
+          The archive's README.md covers remote access, the local-only variant, the bundled command sandbox, data locations, and limitations.
           EOF
             gh release create "$RELEASE_TAG" "${flags[@]}" --notes-file notes.md
           fi
           gh release upload "$RELEASE_TAG" --clobber \
             "dist-portable/dsh-$VERSION-linux-x64.tar.gz" \
-            "dist-portable/dsh-$VERSION-linux-x64.tar.gz.sha256"
+            "dist-portable/dsh-$VERSION-linux-x64.tar.gz.sha256" \
+            "dist-portable/dsh-$VERSION-linux-x64-local.tar.gz" \
+            "dist-portable/dsh-$VERSION-linux-x64-local.tar.gz.sha256"
