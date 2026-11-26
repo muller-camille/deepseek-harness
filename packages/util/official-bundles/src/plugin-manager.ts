@@ -82,4 +82,7 @@ export const EXPERIMENTAL_BUNDLES: ReadonlySet<string> = new Set([
   '@deepseek-ai/dsh-experimental-liveshare',
   '@deepseek-ai/dsh-deepseek-chat-import',
   '@deepseek-ai/dsh-browser-use-extension-bridge',
+  '@deepseek-ai/dsh-kibana',
+  '@deepseek-ai/dsh-mediawiki',
+  '@deepseek-ai/dsh-oracle-db',
 ])

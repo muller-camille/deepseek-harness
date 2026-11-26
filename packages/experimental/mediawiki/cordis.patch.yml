@@ -1,0 +1,4 @@
+# Opt-in Local wiki (MediaWiki) bundle. Shipped profiles do not include this layer.
+- insert:
+    - id: mediawiki
+      name: '@deepseek-ai/dsh-mediawiki'

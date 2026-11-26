@@ -5,4 +5,45 @@
 here=$(dirname -- "$(readlink -f -- "$0")") || exit 1
 PATH=${PATH:+$PATH:}$here/libexec/sandbox
 export PATH
+
+# The local-only release ships libexec/local-only/<profile>.yml, plus default.yml for custom
+# profiles, and adds the booted profile's overlay so no profile contacts DeepSeek-operated
+# services. Launcher options precede the app's arguments: the overlay goes after a bare profile
+# name, or before the first option otherwise.
+overlays=$here/libexec/local-only
+if [ -d "$overlays" ]; then
+  DSH_TELEMETRY_DISABLED=1
+  export DSH_TELEMETRY_DISABLED
+  profile=
+  case ${1-} in
+    '' | plugin) ;;
+    -*)
+      expect=
+      for argument do
+        if [ -n "$expect" ]; then
+          if [ "$expect" = profile ]; then profile=$argument; fi
+          expect=
+          continue
+        fi
+        case $argument in
+          --profile) expect=profile ;;
+          --profile=*) profile=${argument#--profile=} ;;
+          --patch | --from-default-profile) expect=value ;;
+          --dump-default-config) profile= && break ;;
+          -*) ;;
+          *) break ;;
+        esac
+      done
+      ;;
+    *) profile=$1 ;;
+  esac
+  if [ -n "$profile" ]; then
+    overlay=$overlays/default.yml
+    if [ -f "$overlays/$profile.yml" ]; then overlay=$overlays/$profile.yml; fi
+    case $1 in
+      -*) set -- --patch "$overlay" "$@" ;;
+      *) shift && set -- "$profile" --patch "$overlay" "$@" ;;
+    esac
+  fi
+fi
 exec "$here/libexec/dsh" "$@"

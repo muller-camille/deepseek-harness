@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Kibana 日志与仪表板",
+    "description": "让模型通过你的 Kibana 搜索日志，并读取仪表板、可视化和已保存的搜索。"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Oracle-Datenbank (schreibgeschützt)",
+    "description": "Lassen Sie das Modell das Schema einer Oracle-Datenbank durchsuchen und schreibgeschützte SELECT-Abfragen ausführen."
+  }
+}

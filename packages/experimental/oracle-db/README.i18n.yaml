@@ -1,0 +1,73 @@
+# Bilingual-pair consistency record for README.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write packages/experimental/oracle-db/README.md
+/:
+  en: 807d3db8ad07fa83
+  zh: 32bf65aefcef23dd
+/deepseek-ai-dsh-oracle-db:
+  en: 3f22dc093d9a5c55
+  zh: 02f04363608f09d0
+/deepseek-ai-dsh-oracle-db/summary:
+  en: b18ec0aeaa65816e
+  zh: 93759513e5ff708d
+/deepseek-ai-dsh-oracle-db/table-of-contents:
+  en: d152484eb41ac6b4
+  zh: ea2227f28624a0e6
+/deepseek-ai-dsh-oracle-db/use-this-package:
+  en: 13879509c95d1e47
+  zh: d52069e98ffb87f5
+/deepseek-ai-dsh-oracle-db/use-this-package/tools:
+  en: 68d74cceecdb50f6
+  zh: 45ca8d70ce1eaa34
+/deepseek-ai-dsh-oracle-db/use-this-package/read-only-guarantees-and-their-limit:
+  en: c4c2515a8e5af0ae
+  zh: 2bc51fc659659f57
+/deepseek-ai-dsh-oracle-db/use-this-package/thin-mode:
+  en: 6fec76ed4193acdc
+  zh: 4a4bae639ec493ec
+/deepseek-ai-dsh-oracle-db/use-this-package/errors:
+  en: cd16a8284476d955
+  zh: 549c7dfdb039ca5d
+/deepseek-ai-dsh-oracle-db/understand-the-implementation:
+  en: 3021ca902419031d
+  zh: 0e6858d3750ab6fe
+/deepseek-ai-dsh-oracle-db/further-exploration:
+  en: 95ae2142fe1f5f9f
+  zh: b4dc7139dadf6eb8
+/deepseek-ai-dsh-oracle-db/model-experience:
+  en: 215e7ba838619b7b
+  zh: a311da3843709f90
+/deepseek-ai-dsh-oracle-db/model-experience/oracle-tools:
+  en: 3de2a5c693924351
+  zh: 35a33cd29af87cdd
+/deepseek-ai-dsh-oracle-db/model-experience/oracle-tools/what-the-model-sees:
+  en: b505244ee3ca5b28
+  zh: ef23c15bb4cfac84
+/deepseek-ai-dsh-oracle-db/model-experience/oracle-tools/token-effect:
+  en: 8c8f9627bc19a294
+  zh: 40e653ba0d1ba838
+/deepseek-ai-dsh-oracle-db/model-experience/oracle-tools/kv-cache-effect:
+  en: fb13b355312110f9
+  zh: 024dfd3e0becdeda
+/deepseek-ai-dsh-oracle-db/model-experience/oracle-system-prompt-section:
+  en: ad983a40aa42d908
+  zh: 02dfbd49fce910d4
+/deepseek-ai-dsh-oracle-db/model-experience/oracle-system-prompt-section/what-the-model-sees:
+  en: 023f7fe7b4899020
+  zh: 33ce5923aa2aa405
+/deepseek-ai-dsh-oracle-db/model-experience/oracle-system-prompt-section/what-the-model-sees/oracle-guidance:
+  en: 265e62882b8005de
+  zh: 142b782bd172871b
+/deepseek-ai-dsh-oracle-db/model-experience/oracle-system-prompt-section/token-effect:
+  en: bbb9f25b5e1fd5fd
+  zh: 75041adaba0594ad
+/deepseek-ai-dsh-oracle-db/model-experience/oracle-system-prompt-section/kv-cache-effect:
+  en: 6ced1825bdbe98de
+  zh: e1cb67fc3a32c5d4
+/deepseek-ai-dsh-oracle-db/known-limitations-and-deferred-work:
+  en: f13a368732e07693
+  zh: 7055afe9e05bf0bb
+/deepseek-ai-dsh-oracle-db/known-limitations-and-deferred-work/dev-note:
+  en: 5bbbd77dfc0821eb
+  zh: 1b7661e488708994

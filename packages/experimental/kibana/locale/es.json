@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Registros y paneles de Kibana",
+    "description": "Deje que el modelo busque registros y lea paneles, visualizaciones y búsquedas guardadas a través de su Kibana."
+  }
+}

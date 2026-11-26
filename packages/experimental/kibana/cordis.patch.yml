@@ -1,0 +1,4 @@
+# Opt-in Kibana logs and dashboards bundle. Shipped profiles do not include this layer.
+- insert:
+    - id: kibana
+      name: '@deepseek-ai/dsh-kibana'

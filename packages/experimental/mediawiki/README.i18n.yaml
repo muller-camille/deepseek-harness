@@ -1,0 +1,70 @@
+# Bilingual-pair consistency record for README.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write packages/experimental/mediawiki/README.md
+/:
+  en: a789467ea54ac29b
+  zh: d7f8773f37d40af8
+/deepseek-ai-dsh-mediawiki:
+  en: 1f1c0b541e0177f8
+  zh: 0bdc39e49cddb0c8
+/deepseek-ai-dsh-mediawiki/summary:
+  en: 2a2aae9026307ce4
+  zh: d41d79089a41f95c
+/deepseek-ai-dsh-mediawiki/table-of-contents:
+  en: d152484eb41ac6b4
+  zh: ea2227f28624a0e6
+/deepseek-ai-dsh-mediawiki/use-this-package:
+  en: bbff250eba0f1b89
+  zh: b20a47f82d8ab6e0
+/deepseek-ai-dsh-mediawiki/use-this-package/enable-the-bundle:
+  en: fff4483c0a467ac7
+  zh: 0bfde00c41d1e4b0
+/deepseek-ai-dsh-mediawiki/use-this-package/reach-an-intranet-wiki-through-a-proxy:
+  en: 73ccd6671598e714
+  zh: 3432bd2d7144b4b1
+/deepseek-ai-dsh-mediawiki/use-this-package/failures:
+  en: f33518734bc4ba53
+  zh: 1bd366f240cadd04
+/deepseek-ai-dsh-mediawiki/understand-the-implementation:
+  en: 56af4efc4710c2ad
+  zh: 588f7ad73c980867
+/deepseek-ai-dsh-mediawiki/further-exploration:
+  en: d6555e4542fa4d0f
+  zh: b741bed02e32fb00
+/deepseek-ai-dsh-mediawiki/model-experience:
+  en: 215e7ba838619b7b
+  zh: a311da3843709f90
+/deepseek-ai-dsh-mediawiki/model-experience/wiki-tools:
+  en: 4ae290a58b4fc2df
+  zh: 6fd1bef972a868dd
+/deepseek-ai-dsh-mediawiki/model-experience/wiki-tools/what-the-model-sees:
+  en: 3a06a9aad5982279
+  zh: acb74710e900371e
+/deepseek-ai-dsh-mediawiki/model-experience/wiki-tools/token-effect:
+  en: f39b512f521efb58
+  zh: 0bd86bf220a8d241
+/deepseek-ai-dsh-mediawiki/model-experience/wiki-tools/kv-cache-effect:
+  en: 8142ecbbd73185bb
+  zh: f06a9ee1a4211ac2
+/deepseek-ai-dsh-mediawiki/model-experience/system-prompt-guidance:
+  en: 53782a305dcf507d
+  zh: dcbd09f31f0c54df
+/deepseek-ai-dsh-mediawiki/model-experience/system-prompt-guidance/what-the-model-sees:
+  en: 81a5b10ada9d7e4a
+  zh: 37e14f145a7ece3b
+/deepseek-ai-dsh-mediawiki/model-experience/system-prompt-guidance/what-the-model-sees/guidance-text:
+  en: 8f57292f6821da96
+  zh: b2d3bc7e5c9cbc05
+/deepseek-ai-dsh-mediawiki/model-experience/system-prompt-guidance/token-effect:
+  en: 8431f8a19c7322ca
+  zh: 1208242fc89a41d2
+/deepseek-ai-dsh-mediawiki/model-experience/system-prompt-guidance/kv-cache-effect:
+  en: a8809fe7f3f7d01f
+  zh: 0ffebb338e8ae923
+/deepseek-ai-dsh-mediawiki/known-limitations-and-deferred-work:
+  en: 20ad6fae1bb22ecc
+  zh: f2cb991e2772fa0d
+/deepseek-ai-dsh-mediawiki/known-limitations-and-deferred-work/dev-note:
+  en: 27eac250073ea40e
+  zh: a50655ee28c3bb31

@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Wiki local (MediaWiki)",
+    "description": "Deje que el modelo busque y lea artículos en su propio sitio MediaWiki, como una réplica local de Wikipedia."
+  }
+}

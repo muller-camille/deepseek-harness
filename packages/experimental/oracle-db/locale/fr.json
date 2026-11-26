@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Base de données Oracle (lecture seule)",
+    "description": "Laissez le modèle parcourir le schéma d'une base de données Oracle et exécuter des requêtes SELECT en lecture seule."
+  }
+}

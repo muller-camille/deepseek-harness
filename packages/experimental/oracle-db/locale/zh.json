@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Oracle 数据库（只读）",
+    "description": "让模型浏览 Oracle 数据库的结构，并运行只读的 SELECT 查询。"
+  }
+}

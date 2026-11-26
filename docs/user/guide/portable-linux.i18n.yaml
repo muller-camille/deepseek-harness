@@ -17,6 +17,12 @@
 /run-the-portable-linux-release/other-modes:
   en: 05a8dabd79d178fb
   zh: 818155cd847c9ffe
+/run-the-portable-linux-release/use-only-your-own-model-server:
+  en: 73cd33893eb53e71
+  zh: a579784f04b1651f
+/run-the-portable-linux-release/connect-to-your-wiki-oracle-and-kibana:
+  en: 15d76bdf0b166145
+  zh: 10ce1f6da0661fef
 /run-the-portable-linux-release/browse-with-your-own-chrome:
   en: 0d6c4963557b381c
   zh: 4f543e5ea63eff88
@@ -24,8 +30,8 @@
   en: c945d01a3eed2a9a
   zh: f05dd57729474a0b
 /run-the-portable-linux-release/files-and-data:
-  en: a64c88c4ac5003fd
-  zh: c96a5e47f57e584a
+  en: 4f1fe826dd81ee6a
+  zh: c1f60b349e41fb0f
 /run-the-portable-linux-release/limitations:
   en: 44456caed6370092
   zh: 218919e2b28190cc

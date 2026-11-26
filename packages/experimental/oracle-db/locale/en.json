@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Oracle database (read-only)",
+    "description": "Let the model browse the schema of an Oracle database and run read-only SELECT queries."
+  }
+}
